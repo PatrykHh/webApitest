@@ -14,6 +14,12 @@ namespace WebaApiTest
 {
     internal class Helper
     {
+
+        /// <summary>
+        /// Gets response
+        /// </summary>
+        /// <param name="response">Call response</param>
+        /// <returns>Response content</returns>
         public static string GetResponseString(HttpWebResponse response)
         {
             using (Stream stream = response.GetResponseStream())
@@ -25,6 +31,11 @@ namespace WebaApiTest
             }
         }
 
+        /// <summary>
+        /// Json object parser
+        /// </summary>
+        /// <param name="str">Input string</param>
+        /// <returns>JObject</returns>
         public static JObject ParseToJson(string str)
         {
             JObject json = JObject.Parse(str);
