@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace WebaApiTest
@@ -19,10 +21,15 @@ namespace WebaApiTest
         public Request(SerializationInfo serializationInfo, StreamingContext streamingContext) : base(serializationInfo, streamingContext)
         {
         }
-
+        /// <summary>
+        /// Creates Request object and set from config file: host, username, password
+        /// </summary>
+        /// <param name="apiAddress"></param>
         public Request(string apiAddress)
         {
-            _request = (HttpWebRequest) WebRequest.Create(apiAddress);
+            var host = ConfigurationManager.AppSettings["Host"];
+            _request = (HttpWebRequest) WebRequest.Create(host+apiAddress);
+            SetDefaultValues();
         }
 
         public override string Method { get; set; } = "GET";
@@ -83,6 +90,13 @@ namespace WebaApiTest
 
         public WebResponse WebResponse { get; set; }
 
+
+        public void SetDefaultValues()
+        {
+            Password = ConfigurationManager.AppSettings["Password"];
+            Username = ConfigurationManager.AppSettings["Username"];
+            Timeout = Convert.ToInt32(ConfigurationManager.AppSettings["Timeout"]);
+        }
 
         public HttpWebRequest AddHeader(HttpWebRequest request, Dictionary<string, string> headers)
         {
