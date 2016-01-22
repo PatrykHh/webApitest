@@ -21,10 +21,9 @@ namespace WebaApiTest
         [TestMethod]
         public void TestMethod2()
         {
-            Request request = new Request("http://httpbin.org/");
-            //request.url = "http://httpbin.org/digest-auth/auth/user/passwd";
+            Request request = new Request("httpbin.org/");
             request.Method = "POST";
-            request.Timeout = 10;
+            request.Timeout = 3000;
             request.CallService("Get");
             Assert.IsTrue(request.CheckStatusCode(200));
             Assert.IsTrue(request.CheckStatusDescription("OK"));

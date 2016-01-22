@@ -107,20 +107,12 @@ namespace WebaApiTest
         /// <summary>
         /// Request authentication username
         /// </summary>
-        private string Username
-        {
-            get { return Username; }
-            set { Username = value; }
-        }
+        private string Username { get; set; }
 
         /// <summary>
         /// Request authentication password
         /// </summary>
-        private string Password
-        {
-            get { return Password; }
-            set { Password = value; }
-        }
+        private string Password { get; set; }
 
         /// <summary>
         /// Response status code
@@ -153,6 +145,7 @@ namespace WebaApiTest
         /// </summary>
         private void SetDefaultValues()
         {
+            Password = "";
             Password = ConfigurationManager.AppSettings["Password"];
             Username = ConfigurationManager.AppSettings["Username"];
             Timeout = Convert.ToInt32(ConfigurationManager.AppSettings["Timeout"]);
