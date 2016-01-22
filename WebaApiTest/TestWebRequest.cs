@@ -24,11 +24,11 @@ namespace WebaApiTest
         /// <summary>
         /// Creates Request object and set from config file: host, username, password
         /// </summary>
-        /// <param name="apiAddress"></param>
-        public Request(string apiAddress)
+        /// <param name="url"></param>
+        public Request(string url)
         {
             var host = ConfigurationManager.AppSettings["Host"];
-            _request = (HttpWebRequest) WebRequest.Create(host+apiAddress);
+            _request = (HttpWebRequest) WebRequest.Create(host+ url);
             SetDefaultValues();
         }
 
@@ -158,8 +158,9 @@ namespace WebaApiTest
         /// <param name="request">HttpWebRequest</param>
         /// <param name="headers">Key, value dictionary of headers to be added to request.</param>
         /// <returns>HttpWebRequest</returns>
-        public HttpWebRequest AddHeader(HttpWebRequest request, Dictionary<string, string> headers)
+        public Request AddHeader(Dictionary<string, string> headers)
         {
+
             if (headers.Keys.Count > 0)
             {
                 foreach (var key in headers.Keys)
@@ -167,28 +168,28 @@ namespace WebaApiTest
                     switch (key)
                     {
                         case "Referer":
-                            request.Referer = headers[key];
+                            _request.Referer = headers[key];
                             break;
                         case "MediaType":
-                            request.MediaType = headers[key];
+                            _request.MediaType = headers[key];
                             break;
                         case "Host":
-                            request.Host = headers[key];
+                            _request.Host = headers[key];
                             break;
                         case "ContentType":
-                            request.ContentType = headers[key];
+                            _request.ContentType = headers[key];
                             break;
                         case "Accept":
-                            request.Accept = headers[key];
+                            _request.Accept = headers[key];
                             break;
                         default:
-                            request.Headers.Add(key, headers[key]);
+                            _request.Headers.Add(key, headers[key]);
                             break;
                     }
                 }
             }
 
-            return request;
+            return this;
         }
 
         /// <summary>
@@ -212,12 +213,12 @@ namespace WebaApiTest
         /// <param name="password">Password</param>
         /// <param name="authenticationType">Authentication type</param>
         /// <returns>HttpWebRequest</returns>
-        public HttpWebRequest Authenticate(HttpWebRequest request, string username, string password, string authenticationType = "Basic")
+        public Request Authenticate(string username, string password, string authenticationType = "Basic")
         {
             CredentialCache credentialCache = new CredentialCache();
             credentialCache.Add(RequestUri, authenticationType, new NetworkCredential(username, password));
-            request.Credentials = credentialCache;
-            return request;
+            _request.Credentials = credentialCache;
+            return this;
         }
 
         /// <summary>
@@ -266,24 +267,24 @@ namespace WebaApiTest
         /// <param name="headers">Key, value dictionary of headers to be added to request.</param>
         /// <param name="authenticationType">Authentication type</param>
         /// <returns>Request</returns>
-        public Request CallService(string requestType, string responseType, object requestContent, string contentType, Dictionary<string,string> headers, string authenticationType)
+        public Request CallService( string requestType, string responseType, object requestContent, string contentType, Dictionary<string,string> headers, string authenticationType)
         {
             _request.Method = requestType;
-            AddHeader(_request, headers);
+            AddHeader(headers);
 
             if (_request.Method != "GET")
             {
-                AddRequestContent(_request, requestContent, contentType);
+                AddRequestContent(requestContent, contentType);
             }
 
             if (authenticationType != String.Empty)
             {
-                Authenticate(_request, Username, Password, authenticationType);
+                Authenticate(Username, Password, authenticationType);
             }
 
             try
             {
-                this.WebResponse = _request.GetResponse();
+                WebResponse = _request.GetResponse();
 
             }
             catch (WebException e)
@@ -305,7 +306,7 @@ namespace WebaApiTest
             this.ResponseContentString = contentString;
             switch (responseType)
             {
-                case ("JSON"):
+                case ("Json"):
                     this.RequestContentJson = Helper.ParseToJson(ResponseContentString);
                     break;
             }
@@ -319,7 +320,7 @@ namespace WebaApiTest
         /// <param name="content">Content to be send</param>
         /// <param name="contentType">Request content type: String, Json or any other object</param>
         /// <returns>HttpWebRequest</returns>
-        public HttpWebRequest AddRequestContent(HttpWebRequest request, object content, string contentType)
+        public Request AddRequestContent(object content, string contentType)
         {
             byte[] byteArray = null;
             switch (contentType)
@@ -341,11 +342,11 @@ namespace WebaApiTest
                     break;
             }
 
-            request.ContentLength = byteArray.Length;
-            Stream dataStream = request.GetRequestStream();
+            _request.ContentLength = byteArray.Length;
+            Stream dataStream = _request.GetRequestStream();
             dataStream.Write(byteArray, 0, byteArray.Length);
             dataStream.Close();
-            return request;
+            return this;
         }
 
 
@@ -367,6 +368,10 @@ namespace WebaApiTest
         /// <returns>True if description matches expected status description</returns>
         public bool CheckStatusDescription(string expectedStatusDescription)
         {
+            if (StatusDescription == null)
+            {
+                return false;
+            }
             return StatusDescription.Equals(expectedStatusDescription);
         }
 
