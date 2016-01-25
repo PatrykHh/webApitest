@@ -231,15 +231,27 @@ namespace WebaApiTest
             return this;
         }
 
+        /// <summary>
+        /// Call service with Get method. Url is passed via class constructor.
+        /// </summary>
+        /// <param name="requestType">Request type, Get,Post, Put or Delete</param>
+        /// <returns>Request</returns>
+        public Request CallService(string requestType)
+        {
+            CallService(requestType, "", "", "", new Dictionary<string, string>(), "");
+            return this;
+        }
+
 
         /// <summary>
         /// Call service with Get method. Url is passed via class constructor.
         /// </summary>
         /// <param name="responseType">Response type, String or Json object</param>
+        /// <param name="requestType">Request type, Get,Post, Put or Delete</param>
         /// <returns>Request</returns>
-        public Request CallService(string responseType)
+        public Request CallService(string requestType, string responseType)
         {
-            CallService("GET", responseType, "", "", new Dictionary<string, string>(), "");
+            CallService(requestType, responseType, "", "", new Dictionary<string, string>(), "");
             return this;
         }
 
