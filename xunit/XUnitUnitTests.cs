@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WebaApiTest;
+
+namespace xunit
+{
+    [TestClass]
+    public class XUnitUnitTests
+    {
+        [TestMethod]
+        public void SimpleGetCall()
+        {
+            Request request = new Request("/get");
+            request.CallService();
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+        }
+
+        [TestMethod]
+        public void GetWithHeadersUsingParams()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("Host", "httpbin.org");
+            Request request = new Request("/headers");
+            request.CallService("Get", "Json", "", "", headers, "");
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
+        }
+
+        [TestMethod]
+        public void GetWithHeaders()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("Host", "httpbin.org");
+            Request request = new Request("/headers");
+            request.AddHeader(headers).CallService();
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
+        }
+
+        [TestMethod]
+        public void GetWithAuthorization()
+        {
+            Request request = new Request("/basic-auth/user/passwd");
+            request.Authenticate("user", "passwd").CallService();
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+        }
+
+        [TestMethod]
+        public void NotSufficientTimeout()
+        {
+            Request request = new Request("/get");
+            request.Timeout = 10;
+            request.CallService();
+            Assert.IsFalse(request.CheckStatusCode(200));
+            Assert.IsFalse(request.CheckStatusDescription("OK"));
+        }
+
+        [TestMethod]
+        public void Post()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("ContentType", "application/json");
+            Request request = new Request("/post");
+            request.AddHeader(headers).CallService("Post", "String", "Test", "String");
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
+        }
+
+        [TestMethod]
+        public void Put()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("ContentType", "application/json");
+            Request request = new Request("/put");
+            request.AddHeader(headers).CallService("Put", "String", "Test", "String");
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
+        }
+
+        [TestMethod]
+        public void Delete()
+        {
+            Request request = new Request("/delete");
+            request.CallService("DELETE", "String", "", "String");
+            Assert.IsTrue(request.CheckStatusCode(200));
+            Assert.IsTrue(request.CheckStatusDescription("OK"));
+        }
+    }
+}
+
