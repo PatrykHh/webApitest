@@ -152,10 +152,17 @@ namespace WebaApiTest
             _request.Method = "GET";
         }
 
+        public Request AddHeader(string key, string value)
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>();
+            header.Add(key, value);
+            AddHeader(header); 
+            return this;
+        }
+
         /// <summary>
         /// Sets headers. 
         /// </summary>
-        /// <param name="request">HttpWebRequest</param>
         /// <param name="headers">Key, value dictionary of headers to be added to request.</param>
         /// <returns>HttpWebRequest</returns>
         public Request AddHeader(Dictionary<string, string> headers)
@@ -319,7 +326,7 @@ namespace WebaApiTest
             switch (responseType)
             {
                 case ("Json"):
-                    this.RequestContentJson = Helper.ParseToJson(ResponseContentString);
+                    ParseResponseToJson();
                     break;
             }
             return this;
@@ -328,7 +335,6 @@ namespace WebaApiTest
         /// <summary>
         /// Adds content to be send by request
         /// </summary>
-        /// <param name="request">HttpWebRequest</param>
         /// <param name="content">Content to be send</param>
         /// <param name="contentType">Request content type: String, Json or any other object</param>
         /// <returns>HttpWebRequest</returns>
@@ -362,13 +368,19 @@ namespace WebaApiTest
         }
 
 
+        public void ParseResponseToJson()
+        {
+            this.RequestContentJson = Helper.ParseToJson(ResponseContentString);
+        }
+
+
         #region Asserts
         /// <summary>
         /// Compare expected status code with response status code
         /// </summary>
         /// <param name="expectedStatusCode">Expected Status code</param>
         /// <returns>True if code matches expected status code</returns>
-        public bool CheckStatusCode(int expectedStatusCode)
+        public bool AssertStatusCode(int expectedStatusCode)
         {
             return statusCode.Equals(expectedStatusCode);
         }
@@ -378,7 +390,7 @@ namespace WebaApiTest
         /// </summary>
         /// <param name="expectedStatusDescription">Expected Status description</param>
         /// <returns>True if description matches expected status description</returns>
-        public bool CheckStatusDescription(string expectedStatusDescription)
+        public bool AssertStatusDescription(string expectedStatusDescription)
         {
             if (StatusDescription == null)
             {
@@ -392,9 +404,48 @@ namespace WebaApiTest
         /// </summary>
         /// <param name="expectedResponseContent">Expected response content</param>
         /// <returns>True if response content matches expected response content</returns>
-        public bool CheckResponseContent(string expectedResponseContent)
+        public bool AssertResponseContent(string expectedResponseContent)
         {
             return ResponseContentString.Equals(expectedResponseContent);
+        }
+
+        /// <summary>
+        /// Check if Json contains value for given key
+        /// </summary>
+        /// <param name="key">Property name</param>
+        /// <param name="value">Property value</param>
+        /// <returns>True if value for given key exists</returns>
+        public bool AssertJsonResponseContentContains(string key, string value)
+        {
+            var test = RequestContentJson[key].ToList();
+            return test.Contains(value);
+        }
+
+        /// <summary>
+        /// Check if Json equals value for given key
+        /// </summary>
+        /// <param name="key">Property name</param>
+        /// <param name="value">Property value</param>
+        /// <returns>True if value for given key equals expected value</returns>
+        public bool AssertJsonResponseContentEquals(string key, string value)
+        {
+            var test = RequestContentJson[key].ToString();
+            return test.Equals(value);
+        }
+
+        /// <summary>
+        /// Check if multiple key value pairs are present in response Json
+        /// </summary>
+        /// <param name="keyValueExpectedResponse">expected key value pairs</param>
+        /// <returns></returns>
+        public bool AssertJsonResponseContent(Dictionary<string,string> keyValueExpectedResponse)
+        {
+            foreach (var key in keyValueExpectedResponse.Keys)
+            {
+                if(!RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]));
+                return false;
+            }
+            return true;
         }
 
         #endregion

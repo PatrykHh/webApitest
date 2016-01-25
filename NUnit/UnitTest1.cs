@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WebaApiTest;
 
-namespace WebaApiTest
+namespace NUnit
 {
     [TestClass]
     public class UnitTest1
@@ -13,8 +12,8 @@ namespace WebaApiTest
         {
             Request request = new Request("/get");
             request.CallService();
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
 
         [TestMethod]
@@ -24,8 +23,8 @@ namespace WebaApiTest
             headers.Add("Host", "httpbin.org");
             Request request = new Request("/headers");
             request.CallService("Get","Json","","", headers,"" );
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
@@ -36,8 +35,8 @@ namespace WebaApiTest
             headers.Add("Host", "httpbin.org");
             Request request = new Request("/headers");
             request.AddHeader(headers).CallService();
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
@@ -46,8 +45,8 @@ namespace WebaApiTest
         {
             Request request = new Request("/basic-auth/user/passwd");
             request.Authenticate("user", "passwd").CallService();
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
 
         [TestMethod]
@@ -56,8 +55,8 @@ namespace WebaApiTest
             Request request = new Request("/get");
             request.Timeout = 10;
             request.CallService();
-            Assert.IsFalse(request.CheckStatusCode(200));
-            Assert.IsFalse(request.CheckStatusDescription("OK"));
+            Assert.IsFalse(request.AssertStatusCode(200));
+            Assert.IsFalse(request.AssertStatusDescription("OK"));
         }
 
         [TestMethod]
@@ -67,8 +66,8 @@ namespace WebaApiTest
             headers.Add("ContentType", "application/json");
             Request request = new Request("/post");
             request.AddHeader(headers).CallService("Post","String","Test","String");
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
@@ -79,8 +78,8 @@ namespace WebaApiTest
             headers.Add("ContentType", "application/json");
             Request request = new Request("/put");
             request.AddHeader(headers).CallService("Put", "String", "Test", "String");
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
@@ -89,8 +88,8 @@ namespace WebaApiTest
         {
             Request request = new Request("/delete");
             request.CallService("DELETE", "String", "", "String");
-            Assert.IsTrue(request.CheckStatusCode(200));
-            Assert.IsTrue(request.CheckStatusDescription("OK"));
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
     }
 }
