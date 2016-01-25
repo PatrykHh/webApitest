@@ -114,6 +114,8 @@ namespace WebaApiTest
         /// </summary>
         private string Password { get; set; }
 
+        public CookieCollection cookies { get; set; }
+
         /// <summary>
         /// Response status code
         /// </summary>
@@ -320,6 +322,7 @@ namespace WebaApiTest
 
             var contentString = Helper.GetResponseString((HttpWebResponse)this.WebResponse);
             var formatedResponse = (HttpWebResponse)this.WebResponse;
+            cookies = formatedResponse.Cookies;
             this.statusCode = (int)formatedResponse.StatusCode;
             this.StatusDescription = formatedResponse.StatusDescription;
             this.ResponseContentString = contentString;
@@ -367,7 +370,18 @@ namespace WebaApiTest
             return this;
         }
 
+        public void SetCookiesFromPreviousRequest()
+        {
+            foreach (var cookie in cookies)
+            {
+                _request.CookieContainer.Add((Cookie)cookie);
+            }
+                
+        }
 
+        /// <summary>
+        /// Parse received response to Json Object
+        /// </summary>
         public void ParseResponseToJson()
         {
             this.RequestContentJson = Helper.ParseToJson(ResponseContentString);
