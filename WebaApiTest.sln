@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebaApiTest", "WebaApiTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xunit", "xunit\xunit.csproj", "{48B07477-4EE5-4934-BFE1-D5C80BCFC5D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit", "NUnit\NUnit.csproj", "{1B453254-CC51-47B7-A7AF-D6D0F08C336F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{48B07477-4EE5-4934-BFE1-D5C80BCFC5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48B07477-4EE5-4934-BFE1-D5C80BCFC5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48B07477-4EE5-4934-BFE1-D5C80BCFC5D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B453254-CC51-47B7-A7AF-D6D0F08C336F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B453254-CC51-47B7-A7AF-D6D0F08C336F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B453254-CC51-47B7-A7AF-D6D0F08C336F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B453254-CC51-47B7-A7AF-D6D0F08C336F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
