@@ -138,6 +138,11 @@ namespace WebaApiTest
         public string ResponseContentString { get; set; }
 
         /// <summary>
+        /// Response as a string
+        /// </summary>
+        public string ResponseContentType { get; set; }
+
+        /// <summary>
         /// Raw webrisponse
         /// </summary>
         public WebResponse WebResponse { get; set; }
@@ -305,7 +310,7 @@ namespace WebaApiTest
 
             try
             {
-                WebResponse = _request.GetResponse();
+                WebResponse = _request.GetResponse();                
 
             }
             catch (WebException e)
@@ -320,6 +325,7 @@ namespace WebaApiTest
                 return this;
            }
 
+            ResponseContentType = WebResponse.ContentType;
             var contentString = Helper.GetResponseString((HttpWebResponse)this.WebResponse);
             var formatedResponse = (HttpWebResponse)this.WebResponse;
             cookies = formatedResponse.Cookies;
@@ -452,12 +458,14 @@ namespace WebaApiTest
         /// </summary>
         /// <param name="keyValueExpectedResponse">expected key value pairs</param>
         /// <returns></returns>
-        public bool AssertJsonResponseContent(Dictionary<string,string> keyValueExpectedResponse)
+        public bool AssertJsonResponseContent(Dictionary<string, string> keyValueExpectedResponse)
         {
             foreach (var key in keyValueExpectedResponse.Keys)
             {
-                if(!RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]));
-                return false;
+                if (!RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]))
+                {
+                    return false;
+                }
             }
             return true;
         }

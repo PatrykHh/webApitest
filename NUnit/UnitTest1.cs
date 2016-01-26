@@ -91,5 +91,26 @@ namespace NUnit
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
+
+        [TestMethod]
+        public void GetImage()
+        {
+            Request request = new Request("/image/png");
+            request.CallService();
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.AreEqual("image/png",request.ResponseContentType);
+        }
+
+        [TestMethod]
+        public void GetGzip()
+        {
+            Request request = new Request("/gzip");
+            request.CallService();
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.AreEqual("application/json", request.ResponseContentType);
+            Assert.IsTrue(request.AssertResponseContent("gzip"));
+        }
     }
 }
