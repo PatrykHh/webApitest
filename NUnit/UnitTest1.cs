@@ -4,6 +4,7 @@ using WebaApiTest;
 
 namespace NUnit
 {
+    [TestFixture]
     public class UnitTest1
     {
         [Test]
