@@ -1,116 +1,115 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using WebaApiTest;
 
 namespace xunit
 {
-    [TestClass]
     public class XUnitUnitTests
     {
-        [TestMethod]
+        [Fact]
         public void SimpleGetCall()
         {
             Request request = new Request("/get");
             request.CallService();
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetWithHeadersUsingParams()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Host", "httpbin.org");
             Request request = new Request("/headers");
             request.CallService("Get", "Json", "", "", headers, "");
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.True(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetWithHeaders()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Host", "httpbin.org");
             Request request = new Request("/headers");
             request.AddHeader(headers).CallService();
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.True(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetWithAuthorization()
         {
             Request request = new Request("/basic-auth/user/passwd");
             request.Authenticate("user", "passwd").CallService();
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Fact]
         public void NotSufficientTimeout()
         {
             Request request = new Request("/get");
             request.Timeout = 10;
             request.CallService();
-            Assert.IsFalse(request.AssertStatusCode(200));
-            Assert.IsFalse(request.AssertStatusDescription("OK"));
+            Assert.False(request.AssertStatusCode(200));
+            Assert.False(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Fact]
         public void Post()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
             Request request = new Request("/post");
             request.AddHeader(headers).CallService("Post", "String", "Test", "String");
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.True(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
-        [TestMethod]
+        [Fact]
         public void Put()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
             Request request = new Request("/put");
             request.AddHeader(headers).CallService("Put", "String", "Test", "String");
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.True(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
-        [TestMethod]
+        [Fact]
         public void Delete()
         {
             Request request = new Request("/delete");
             request.CallService("DELETE", "String", "", "String");
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Fact]
         public void GetImage()
         {
             Request request = new Request("/image/png");
             request.CallService();
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.AreEqual("image/png", request.ResponseContentType);
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.Equal("image/png", request.ResponseContentType);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetGzip()
         {
             Request request = new Request("/gzip");
             request.CallService();
-            Assert.IsTrue(request.AssertStatusCode(200));
-            Assert.IsTrue(request.AssertStatusDescription("OK"));
-            Assert.AreEqual("application/json", request.ResponseContentType);
+            Assert.True(request.AssertStatusCode(200));
+            Assert.True(request.AssertStatusDescription("OK"));
+            Assert.Equal("application/json", request.ResponseContentType);
         }
     }
 }

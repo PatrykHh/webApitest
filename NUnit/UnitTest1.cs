@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WebaApiTest;
 
 namespace NUnit
 {
-    [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        [Test]
         public void SimpleGetCall()
         {
             Request request = new Request("/get");
@@ -16,7 +15,7 @@ namespace NUnit
             Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWithHeadersUsingParams()
         {
             Dictionary<string,string> headers = new Dictionary<string,string>();
@@ -28,7 +27,7 @@ namespace NUnit
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWithHeaders()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -40,7 +39,7 @@ namespace NUnit
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWithAuthorization()
         {
             Request request = new Request("/basic-auth/user/passwd");
@@ -49,7 +48,7 @@ namespace NUnit
             Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Test]
         public void NotSufficientTimeout()
         {
             Request request = new Request("/get");
@@ -59,7 +58,7 @@ namespace NUnit
             Assert.IsFalse(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Test]
         public void Post()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -71,7 +70,7 @@ namespace NUnit
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
-        [TestMethod]
+        [Test]
         public void Put()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -83,7 +82,7 @@ namespace NUnit
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
         }
 
-        [TestMethod]
+        [Test]
         public void Delete()
         {
             Request request = new Request("/delete");
@@ -92,7 +91,7 @@ namespace NUnit
             Assert.IsTrue(request.AssertStatusDescription("OK"));
         }
 
-        [TestMethod]
+        [Test]
         public void GetImage()
         {
             Request request = new Request("/image/png");
@@ -102,7 +101,7 @@ namespace NUnit
             Assert.AreEqual("image/png",request.ResponseContentType);
         }
 
-        [TestMethod]
+        [Test]
         public void GetGzip()
         {
             Request request = new Request("/gzip");
