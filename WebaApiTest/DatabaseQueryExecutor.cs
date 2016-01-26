@@ -18,9 +18,6 @@ namespace WebaApiTest
             ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DatabaseToExecution"]]
                 .ConnectionString;
 
-        private readonly string _sqlScriptsPath = ConfigurationManager.AppSettings["SqlFilesPath"];
-        private readonly string _sqlDbTimeout = ConfigurationManager.AppSettings["DataBaseTimeout"];
-
         /// <summary>
         /// Gets the data from data base.
         /// </summary>
@@ -40,10 +37,7 @@ namespace WebaApiTest
                     if (connection.State == ConnectionState.Open)
                     {
                         string sqlStatement = GetStringQueryFromFile(sqlScript);
-                        foreach (var parameter in parameters)
-                        {
-                            sqlStatement = sqlStatement.Replace(parameter.Key, parameter.Value.ToString());
-                        }
+                        sqlStatement = parameters.Aggregate(sqlStatement, (current, parameter) => current.Replace(parameter.Key, parameter.Value.ToString()));
                         var sqlAdapter = new SqlDataAdapter(sqlStatement, connection)
                         {
                             SelectCommand = {CommandTimeout = 200}
@@ -62,7 +56,7 @@ namespace WebaApiTest
                     }
 
                 }
-                catch (Exception exception)
+                catch (Exception )
                 {
                     if (connection.State == ConnectionState.Open)
                     {

@@ -7,8 +7,6 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace WebaApiTest
@@ -28,14 +26,14 @@ namespace WebaApiTest
         public Request(string url)
         {
             var host = ConfigurationManager.AppSettings["Host"];
-            _request = (HttpWebRequest) WebRequest.Create(host+ url);
+            _request = (HttpWebRequest) Create(host+ url);
             SetDefaultValues();
         }
 
         /// <summary>
         /// Set request method type. Get, Post, Put, Delete
         /// </summary>
-        public string Method
+        public override string Method
         {
             get { return _request.Method; }
             set { _request.Method = value; }
@@ -44,7 +42,7 @@ namespace WebaApiTest
         /// <summary>
         /// Set request execution timeout
         /// </summary>
-        public int Timeout
+        public override int Timeout
         {
             get { return _request.Timeout; }
             set { _request.Timeout = value; }
@@ -53,10 +51,7 @@ namespace WebaApiTest
         /// <summary>
         /// Get request uri
         /// </summary>
-        public Uri RequestUri
-        {
-            get { return _request.RequestUri; }
-        }
+        public override Uri RequestUri => _request.RequestUri;
 
         /// <summary>
         /// Accept header
@@ -69,7 +64,7 @@ namespace WebaApiTest
         /// <summary>
         /// ContentType header
         /// </summary>
-        private string ContentType
+        public override string ContentType
         {
             get { return _request.ContentType; }
             set { _request.ContentType = value; }
@@ -114,12 +109,12 @@ namespace WebaApiTest
         /// </summary>
         private string Password { get; set; }
 
-        public CookieCollection cookies { get; set; }
+        public CookieCollection Cookies { get; set; }
 
         /// <summary>
         /// Response status code
         /// </summary>
-        public int statusCode { get; set; }
+        public int StatusCode { get; set; }
 
         /// <summary>
         /// Response status description
@@ -172,8 +167,7 @@ namespace WebaApiTest
         /// <returns></returns>
         public Request AddHeader(string key, string value)
         {
-            Dictionary<string, string> header = new Dictionary<string, string>();
-            header.Add(key, value);
+            Dictionary<string, string> header = new Dictionary<string, string> {{key, value}};
             AddHeader(header); 
             return this;
         }
@@ -193,22 +187,22 @@ namespace WebaApiTest
                     switch (key)
                     {
                         case "Referer":
-                            _request.Referer = headers[key];
+                            Referer = headers[key];
                             break;
                         case "MediaType":
-                            _request.MediaType = headers[key];
+                            MediaType = headers[key];
                             break;
                         case "Host":
-                            _request.Host = headers[key];
+                            Host = headers[key];
                             break;
                         case "ContentType":
-                            _request.ContentType = headers[key];
+                            ContentType = headers[key];
                             break;
                         case "Accept":
-                            _request.Accept = headers[key];
+                            Accept = headers[key];
                             break;
                         default:
-                            _request.Headers.Add(key, headers[key]);
+                            Headers.Add(key, headers[key]);
                             break;
                     }
                 }
@@ -328,21 +322,21 @@ namespace WebaApiTest
                 if (e.Response != null)
                 {
                     var response = (HttpWebResponse) e.Response;
-                    this.statusCode = (int) response.StatusCode;
-                    this.StatusDescription = response.StatusDescription;
+                    StatusCode = (int) response.StatusCode;
+                    StatusDescription = response.StatusDescription;
                 }
-                this.ResponseContentString = e.Message;
+                ResponseContentString = e.Message;
                 return this;
            }
 
             ResponseHeaders = WebResponse.Headers;
             ResponseContentType = WebResponse.ContentType;
-            var contentString = Helper.GetResponseString((HttpWebResponse)this.WebResponse);
-            var formatedResponse = (HttpWebResponse)this.WebResponse;
-            cookies = formatedResponse.Cookies;
-            this.statusCode = (int)formatedResponse.StatusCode;
-            this.StatusDescription = formatedResponse.StatusDescription;
-            this.ResponseContentString = contentString;
+            var contentString = Helper.GetResponseString((HttpWebResponse)WebResponse);
+            var formatedResponse = (HttpWebResponse)WebResponse;
+            Cookies = formatedResponse.Cookies;
+            StatusCode = (int)formatedResponse.StatusCode;
+            StatusDescription = formatedResponse.StatusDescription;
+            ResponseContentString = contentString;
             switch (responseType)
             {
                 case ("Json"):
@@ -360,7 +354,7 @@ namespace WebaApiTest
         /// <returns>HttpWebRequest</returns>
         public Request AddRequestContent(object content, string contentType)
         {
-            byte[] byteArray = null;
+            byte[] byteArray;
             switch (contentType)
             {
                 case "String":
@@ -392,7 +386,7 @@ namespace WebaApiTest
         /// </summary>
         public void SetCookiesFromPreviousRequest()
         {
-            foreach (var cookie in cookies)
+            foreach (var cookie in Cookies)
             {
                 _request.CookieContainer.Add((Cookie)cookie);
             }
@@ -404,7 +398,7 @@ namespace WebaApiTest
         /// </summary>
         public void ParseResponseToJson()
         {
-            this.RequestContentJson = Helper.ParseToJson(ResponseContentString);
+            RequestContentJson = Helper.ParseToJson(ResponseContentString);
         }
 
 
@@ -416,7 +410,7 @@ namespace WebaApiTest
         /// <returns>True if code matches expected status code</returns>
         public bool AssertStatusCode(int expectedStatusCode)
         {
-            return statusCode.Equals(expectedStatusCode);
+            return StatusCode.Equals(expectedStatusCode);
         }
 
         /// <summary>
@@ -474,14 +468,7 @@ namespace WebaApiTest
         /// <returns></returns>
         public bool AssertJsonResponseContent(Dictionary<string, string> keyValueExpectedResponse)
         {
-            foreach (var key in keyValueExpectedResponse.Keys)
-            {
-                if (!RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return keyValueExpectedResponse.Keys.All(key => RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]));
         }
 
         #endregion

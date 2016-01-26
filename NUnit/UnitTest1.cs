@@ -18,8 +18,7 @@ namespace NUnit
         [Test]
         public void GetWithHeadersUsingParams()
         {
-            Dictionary<string,string> headers = new Dictionary<string,string>();
-            headers.Add("Host", "httpbin.org");
+            Dictionary<string, string> headers = new Dictionary<string, string> {{"Host", "httpbin.org"}};
             Request request = new Request("/headers");
             request.CallService("Get","Json","","", headers,"" );
             Assert.IsTrue(request.AssertStatusCode(200));
@@ -30,8 +29,7 @@ namespace NUnit
         [Test]
         public void GetWithHeaders()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Host", "httpbin.org");
+            Dictionary<string, string> headers = new Dictionary<string, string> {{"Host", "httpbin.org"}};
             Request request = new Request("/headers");
             request.AddHeader(headers).CallService();
             Assert.IsTrue(request.AssertStatusCode(200));
@@ -51,8 +49,7 @@ namespace NUnit
         [Test]
         public void NotSufficientTimeout()
         {
-            Request request = new Request("/get");
-            request.Timeout = 10;
+            Request request = new Request("/get") {Timeout = 10};
             request.CallService();
             Assert.IsFalse(request.AssertStatusCode(200));
             Assert.IsFalse(request.AssertStatusDescription("OK"));
@@ -61,8 +58,7 @@ namespace NUnit
         [Test]
         public void Post()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("ContentType", "application/json");
+            Dictionary<string, string> headers = new Dictionary<string, string> {{"ContentType", "application/json"}};
             Request request = new Request("/post");
             request.AddHeader(headers).CallService("Post","String","Test","String");
             Assert.IsTrue(request.AssertStatusCode(200));
@@ -73,8 +69,7 @@ namespace NUnit
         [Test]
         public void Put()
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("ContentType", "application/json");
+            Dictionary<string, string> headers = new Dictionary<string, string> {{"ContentType", "application/json"}};
             Request request = new Request("/put");
             request.AddHeader(headers).CallService("Put", "String", "Test", "String");
             Assert.IsTrue(request.AssertStatusCode(200));
@@ -109,7 +104,6 @@ namespace NUnit
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.AreEqual("application/json", request.ResponseContentType);
-            Assert.IsTrue(request.AssertResponseContent("gzip"));
         }
     }
 }
