@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using Xunit;
 using WebaApiTest;
+using Xunit;
 
 namespace xunit
 {
     public class XUnitUnitTests
     {
         [Fact]
-        public void SimpleGetCall()
+        public void XSimpleGetCall()
         {
             Request request = new Request("/get");
             request.CallService();
@@ -16,7 +16,7 @@ namespace xunit
         }
 
         [Fact]
-        public void GetWithHeadersUsingParams()
+        public void XGetWithHeadersUsingParams()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Host", "httpbin.org");
@@ -28,7 +28,7 @@ namespace xunit
         }
 
         [Fact]
-        public void GetWithHeaders()
+        public void XGetWithHeaders()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Host", "httpbin.org");
@@ -40,7 +40,7 @@ namespace xunit
         }
 
         [Fact]
-        public void GetWithAuthorization()
+        public void XGetWithAuthorization()
         {
             Request request = new Request("/basic-auth/user/passwd");
             request.Authenticate("user", "passwd").CallService();
@@ -49,7 +49,7 @@ namespace xunit
         }
 
         [Fact]
-        public void NotSufficientTimeout()
+        public void XNotSufficientTimeout()
         {
             Request request = new Request("/get");
             request.Timeout = 10;
@@ -59,7 +59,7 @@ namespace xunit
         }
 
         [Fact]
-        public void Post()
+        public void XPost()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
@@ -71,7 +71,7 @@ namespace xunit
         }
 
         [Fact]
-        public void Put()
+        public void XPut()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
@@ -83,7 +83,7 @@ namespace xunit
         }
 
         [Fact]
-        public void Delete()
+        public void XDelete()
         {
             Request request = new Request("/delete");
             request.CallService("DELETE", "String", "", "String");
@@ -92,7 +92,7 @@ namespace xunit
         }
 
         [Fact]
-        public void GetImage()
+        public void XGetImage()
         {
             Request request = new Request("/image/png");
             request.CallService();
@@ -102,7 +102,7 @@ namespace xunit
         }
 
         [Fact]
-        public void GetGzip()
+        public void XGetGzip()
         {
             Request request = new Request("/gzip");
             request.CallService();
