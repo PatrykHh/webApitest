@@ -143,6 +143,11 @@ namespace WebaApiTest
         public string ResponseContentType { get; set; }
 
         /// <summary>
+        /// Response as a string
+        /// </summary>
+        public WebHeaderCollection ResponseHeaders { get; set; }
+
+        /// <summary>
         /// Raw webrisponse
         /// </summary>
         public WebResponse WebResponse { get; set; }
@@ -159,6 +164,12 @@ namespace WebaApiTest
             _request.Method = "GET";
         }
 
+        /// <summary>
+        /// Add header to the request
+        /// </summary>
+        /// <param name="key">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns></returns>
         public Request AddHeader(string key, string value)
         {
             Dictionary<string, string> header = new Dictionary<string, string>();
@@ -222,7 +233,6 @@ namespace WebaApiTest
         /// <summary>
         /// Sets authentication. 
         /// </summary>
-        /// <param name="request">HttpWebRequest</param>
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
         /// <param name="authenticationType">Authentication type</param>
@@ -325,6 +335,7 @@ namespace WebaApiTest
                 return this;
            }
 
+            ResponseHeaders = WebResponse.Headers;
             ResponseContentType = WebResponse.ContentType;
             var contentString = Helper.GetResponseString((HttpWebResponse)this.WebResponse);
             var formatedResponse = (HttpWebResponse)this.WebResponse;
@@ -376,6 +387,9 @@ namespace WebaApiTest
             return this;
         }
 
+        /// <summary>
+        /// Sets coookies from previous request
+        /// </summary>
         public void SetCookiesFromPreviousRequest()
         {
             foreach (var cookie in cookies)
