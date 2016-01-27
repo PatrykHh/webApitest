@@ -125,7 +125,7 @@ namespace WebaApiTest
         /// <summary>
         /// Response parsed to Json object
         /// </summary>
-        public JObject RequestContentJson { get; set; }
+        public JObject ResponseContentJson { get; set; }
 
         /// <summary>
         /// Response as a string
@@ -302,7 +302,7 @@ namespace WebaApiTest
             _request.Method = requestType;
             AddHeader(headers);
 
-            if (_request.Method != "GET")
+            if (requestContent != String.Empty)
             {
                 AddRequestContent(requestContent, contentType);
             }
@@ -355,12 +355,12 @@ namespace WebaApiTest
         public Request AddRequestContent(object content, string contentType)
         {
             byte[] byteArray;
-            switch (contentType)
+            switch (contentType.ToLower())
             {
-                case "String":
+                case "string":
                     byteArray = Encoding.UTF8.GetBytes((string)content);
                     break;
-                case "Json":
+                case "json":
                     string json = content.ToString();
                     byteArray = Encoding.UTF8.GetBytes(json);
                     break;
@@ -398,7 +398,7 @@ namespace WebaApiTest
         /// </summary>
         public void ParseResponseToJson()
         {
-            RequestContentJson = Helper.ParseToJson(ResponseContentString);
+            ResponseContentJson = Helper.ParseToJson(ResponseContentString);
         }
 
 
@@ -445,8 +445,10 @@ namespace WebaApiTest
         /// <returns>True if value for given key exists</returns>
         public bool AssertJsonResponseContentContains(string key, string value)
         {
-            var test = RequestContentJson[key].ToList();
-            return test.Contains(value);
+            var a = ResponseContentJson.Properties();
+            //var keySelector = a as JProperty[] ?? a.ToArray();
+            var test = ResponseContentJson.Property(key);
+            return test.Value.ToString().Contains(value);
         }
 
         /// <summary>
@@ -457,8 +459,10 @@ namespace WebaApiTest
         /// <returns>True if value for given key equals expected value</returns>
         public bool AssertJsonResponseContentEquals(string key, string value)
         {
-            var test = RequestContentJson[key].ToString();
-            return test.Equals(value);
+            var a = ResponseContentJson.Properties();
+            //var keySelector = a as JProperty[] ?? a.ToArray();
+            var test = ResponseContentJson.Property(key);
+            return test.Value.ToString().Equals(value);
         }
 
         /// <summary>
@@ -468,7 +472,7 @@ namespace WebaApiTest
         /// <returns></returns>
         public bool AssertJsonResponseContent(Dictionary<string, string> keyValueExpectedResponse)
         {
-            return keyValueExpectedResponse.Keys.All(key => RequestContentJson[key].ToString().Equals(keyValueExpectedResponse[key]));
+            return keyValueExpectedResponse.Keys.All(key => ResponseContentJson[key].ToString().Equals(keyValueExpectedResponse[key]));
         }
 
         #endregion

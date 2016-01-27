@@ -7,6 +7,22 @@ namespace NUnit
     [TestFixture]
     public class UnitTest1
     {
+
+        [Test]
+        public void TestMethod()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string> { { "ContentType", "application/json" } };
+            Request request = new Request("/post");
+            request.Method = "Post";
+            request.AddHeader(headers)
+                    .AddRequestContent("abc","String")
+                    .CallService("Post")
+                    .ParseResponseToJson();
+            Assert.IsTrue(request.AssertStatusCode(200));
+            Assert.IsTrue(request.AssertStatusDescription("OK"));
+            Assert.IsTrue(request.AssertJsonResponseContentEquals("data","abc"));
+        }
+
         [Test]
         public void SimpleGetCall()
         {
