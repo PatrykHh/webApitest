@@ -12,10 +12,9 @@ namespace NUnit
         public void TestMethod()
         {
             Dictionary<string, string> headers = new Dictionary<string, string> { { "ContentType", "application/json" } };
-            Request request = new Request("/post");
-            request.Method = "Post";
+            Request request = new Request("/postaaa");
             request.AddHeader(headers)
-                    .AddRequestContent("abc","String")
+                    .AddRequestContent("Post", "abc", "String")
                     .CallService("Post")
                     .ParseResponseToJson();
             Assert.IsTrue(request.AssertStatusCode(200));
@@ -26,7 +25,7 @@ namespace NUnit
         [Test]
         public void SimpleGetCall()
         {
-            Request request = new Request("/get");
+            Request request = new Request(Address.Get.ToString());
             request.CallService();
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
@@ -37,7 +36,7 @@ namespace NUnit
         {
             Dictionary<string, string> headers = new Dictionary<string, string> {{"Host", "httpbin.org"}};
             Request request = new Request("/headers");
-            request.CallService("Get","Json","","", headers,"" );
+            request.CallService("Get","Json",null,null, headers);
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));

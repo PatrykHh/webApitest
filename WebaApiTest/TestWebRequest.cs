@@ -98,6 +98,11 @@ namespace WebaApiTest
             set { _request.Referer = value; }
         }
 
+        public bool AllowAutoRedirect
+        {
+            set { _request.AllowAutoRedirect = value; }
+        }
+
 
         /// <summary>
         /// Request authentication username
@@ -180,7 +185,7 @@ namespace WebaApiTest
         public Request AddHeader(Dictionary<string, string> headers)
         {
 
-            if (headers.Keys.Count > 0)
+            if (headers != null)
             {
                 foreach (var key in headers.Keys)
                 {
@@ -214,14 +219,12 @@ namespace WebaApiTest
         /// <summary>
         /// Disable or enable auto redirect
         /// </summary>
-        /// <param name="request">HttpWebRequest</param>
         /// <param name="isAllowed">True if auto redirect is allowed</param>
         /// <returns>HttpWebRequest</returns>
-        public HttpWebRequest AllowAutoRedirect(HttpWebRequest request, bool isAllowed)
+        public Request AllowRedirect(bool isAllowed)
         {
-            request.AllowAutoRedirect = isAllowed;
-
-            return request;
+            AllowAutoRedirect = isAllowed;
+            return this;
         }
 
         /// <summary>
@@ -239,55 +242,7 @@ namespace WebaApiTest
             return this;
         }
 
-        /// <summary>
-        /// Call service with Get method. Url is passed via class constructor.
-        /// </summary>
-        /// <returns>Request</returns>
-        public Request CallService()
-        {
-            CallService("GET", "", "","", new Dictionary<string, string>(),"");
-            return this;
-        }
-
-        /// <summary>
-        /// Call service with Get method. Url is passed via class constructor.
-        /// </summary>
-        /// <param name="requestType">Request type, Get,Post, Put or Delete</param>
-        /// <returns>Request</returns>
-        public Request CallService(string requestType)
-        {
-            CallService(requestType, "", "", "", new Dictionary<string, string>(), "");
-            return this;
-        }
-
-
-        /// <summary>
-        /// Call service with Get method. Url is passed via class constructor.
-        /// </summary>
-        /// <param name="responseType">Response type, String or Json object</param>
-        /// <param name="requestType">Request type, Get,Post, Put or Delete</param>
-        /// <returns>Request</returns>
-        public Request CallService(string requestType, string responseType)
-        {
-            CallService(requestType, responseType, "", "", new Dictionary<string, string>(), "");
-            return this;
-        }
-
-        /// <summary>
-        /// Call service. Url is passed via class constructor.
-        /// </summary>
-        /// <param name="requestType">Get, Post, Put or Delete</param>
-        /// <param name="responseType">Response type, String or Json object</param>
-        /// <param name="requestContent">Content to be send</param>
-        /// <param name="contentType">Request content type: String, Json or any other object</param>
-        /// <returns>Request</returns>
-        public Request CallService(string requestType,string responseType, object requestContent, string contentType)
-        {
-            CallService(requestType, responseType, requestContent, contentType, new Dictionary<string, string>(), "");
-            return this;
-        }
-
-        /// <summary>
+       /// <summary>
         /// Call service. Url is passed via class constructor.
         /// </summary>
         /// <param name="requestType">Get, Post, Put or Delete</param>
@@ -297,17 +252,17 @@ namespace WebaApiTest
         /// <param name="headers">Key, value dictionary of headers to be added to request.</param>
         /// <param name="authenticationType">Authentication type</param>
         /// <returns>Request</returns>
-        public Request CallService( string requestType, string responseType, object requestContent, string contentType, Dictionary<string,string> headers, string authenticationType)
+        public Request CallService( string requestType = "Get", string responseType = "", object requestContent = null, string contentType = "", Dictionary<string,string> headers = null, string authenticationType = "")
         {
-            _request.Method = requestType;
+            Method = requestType;
             AddHeader(headers);
 
-            if (requestContent != String.Empty)
+            if (requestContent != null)
             {
-                AddRequestContent(requestContent, contentType);
+                AddRequestContent(Method, requestContent, contentType);
             }
 
-            if (authenticationType != String.Empty)
+            if (authenticationType != string.Empty)
             {
                 Authenticate(Username, Password, authenticationType);
             }
@@ -352,8 +307,9 @@ namespace WebaApiTest
         /// <param name="content">Content to be send</param>
         /// <param name="contentType">Request content type: String, Json or any other object</param>
         /// <returns>HttpWebRequest</returns>
-        public Request AddRequestContent(object content, string contentType)
+        public Request AddRequestContent(string method, object content, string contentType)
         {
+            Method = method;
             byte[] byteArray;
             switch (contentType.ToLower())
             {
