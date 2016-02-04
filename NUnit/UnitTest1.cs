@@ -12,10 +12,10 @@ namespace NUnit
         public void TestMethod()
         {
             Dictionary<string, string> headers = new Dictionary<string, string> { { "ContentType", "application/json" } };
-            Request request = new Request("/postaaa");
+            Request request = new Request("/post");
             request.AddHeader(headers)
-                    .AddRequestContent("Post", "abc", "String")
-                    .CallService("Post")
+                    .AddRequestContent(Request.Methods.Post, "abc", "String")
+                    .CallService(Request.Methods.Post)
                     .ParseResponseToJson();
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
@@ -36,7 +36,7 @@ namespace NUnit
         {
             Dictionary<string, string> headers = new Dictionary<string, string> {{"Host", "httpbin.org"}};
             Request request = new Request("/headers");
-            request.CallService("Get","Json",null,null, headers);
+            request.CallService(Request.Methods.Get,"Json",null,null, headers);
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
@@ -76,7 +76,7 @@ namespace NUnit
         {
             Dictionary<string, string> headers = new Dictionary<string, string> {{"ContentType", "application/json"}};
             Request request = new Request("/post");
-            request.AddHeader(headers).CallService("Post","String","Test","String");
+            request.AddHeader(headers).CallService(Request.Methods.Post,"String","Test","String");
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
@@ -87,7 +87,7 @@ namespace NUnit
         {
             Dictionary<string, string> headers = new Dictionary<string, string> {{"ContentType", "application/json"}};
             Request request = new Request("/put");
-            request.AddHeader(headers).CallService("Put", "String", "Test", "String");
+            request.AddHeader(headers).CallService(Request.Methods.Put, "String", "Test", "String");
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
             Assert.IsTrue(request.ResponseContentString.Contains("\"data\": \"Test\""));
@@ -97,7 +97,7 @@ namespace NUnit
         public void Delete()
         {
             Request request = new Request("/delete");
-            request.CallService("DELETE", "String", "", "String");
+            request.CallService(Request.Methods.Delete);
             Assert.IsTrue(request.AssertStatusCode(200));
             Assert.IsTrue(request.AssertStatusDescription("OK"));
         }

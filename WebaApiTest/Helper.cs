@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace WebaApiTest
@@ -34,6 +35,11 @@ namespace WebaApiTest
         {
             JObject json = JObject.Parse(str);
             return json;
+        }
+
+        public static T ParseToObject<T>(string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
         }
     }
 }

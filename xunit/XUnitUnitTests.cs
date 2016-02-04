@@ -22,7 +22,7 @@ namespace xunit
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Host", "httpbin.org");
             Request request = new Request("/headers");
-            request.CallService("Get", "Json", "", "", headers, "");
+            request.CallService(Request.Methods.Get, "Json", null, null, headers);
             Assert.True(request.AssertStatusCode(200));
             Assert.True(request.AssertStatusDescription("OK"));
             Assert.True(request.ResponseContentString.Contains("\"Host\": \"httpbin.org\""));
@@ -65,7 +65,7 @@ namespace xunit
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
             Request request = new Request("/post");
-            request.AddHeader(headers).CallService("Post", "String", "Test", "String");
+            request.AddHeader(headers).CallService(Request.Methods.Post, "String", "Test", "String");
             Assert.True(request.AssertStatusCode(200));
             Assert.True(request.AssertStatusDescription("OK"));
             Assert.True(request.ResponseContentString.Contains("\"data\": \"Test\""));
@@ -77,7 +77,7 @@ namespace xunit
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("ContentType", "application/json");
             Request request = new Request("/put");
-            request.AddHeader(headers).CallService("Put", "String", "Test", "String");
+            request.AddHeader(headers).CallService(Request.Methods.Put, "String", "Test", "String");
             Assert.True(request.AssertStatusCode(200));
             Assert.True(request.AssertStatusDescription("OK"));
             Assert.True(request.ResponseContentString.Contains("\"data\": \"Test\""));
@@ -87,7 +87,7 @@ namespace xunit
         public void XDelete()
         {
             Request request = new Request("/delete");
-            request.CallService("DELETE", "String", "", "String");
+            request.CallService(Request.Methods.Delete);
             Assert.True(request.AssertStatusCode(200));
             Assert.True(request.AssertStatusDescription("OK"));
         }

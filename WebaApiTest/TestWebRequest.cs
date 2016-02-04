@@ -16,6 +16,10 @@ namespace WebaApiTest
 
         private HttpWebRequest _request;
 
+        public enum Methods
+        { Post, Put, Get, Delete
+        }
+
         public Request(SerializationInfo serializationInfo, StreamingContext streamingContext) : base(serializationInfo, streamingContext)
         {
         }
@@ -33,10 +37,29 @@ namespace WebaApiTest
         /// <summary>
         /// Set request method type. Get, Post, Put, Delete
         /// </summary>
-        public override string Method
+        public Methods Method
         {
-            get { return _request.Method; }
-            set { _request.Method = value; }
+            get
+            {
+                Methods enumMethod = Methods.Get;
+                switch (_request.Method)
+                {
+                    case "Get":
+                        enumMethod = Methods.Get;
+                        break;
+                    case "Put":
+                        enumMethod = Methods.Put;
+                        break;
+                    case "Post":
+                        enumMethod = Methods.Post;
+                        break;
+                    case "Delete":
+                        enumMethod = Methods.Delete;
+                        break;
+                }
+                return enumMethod;
+            }
+            set { _request.Method = value.ToString().ToUpper(); }
         }
 
         /// <summary>
@@ -252,14 +275,14 @@ namespace WebaApiTest
         /// <param name="headers">Key, value dictionary of headers to be added to request.</param>
         /// <param name="authenticationType">Authentication type</param>
         /// <returns>Request</returns>
-        public Request CallService( string requestType = "Get", string responseType = "", object requestContent = null, string contentType = "", Dictionary<string,string> headers = null, string authenticationType = "")
+        public Request CallService(Methods requestType = Methods.Get, string responseType = "", object requestContent = null, string contentType = "", Dictionary<string,string> headers = null, string authenticationType = "")
         {
             Method = requestType;
             AddHeader(headers);
 
             if (requestContent != null)
             {
-                AddRequestContent(Method, requestContent, contentType);
+                AddRequestContent(requestType, requestContent, contentType);
             }
 
             if (authenticationType != string.Empty)
@@ -307,7 +330,7 @@ namespace WebaApiTest
         /// <param name="content">Content to be send</param>
         /// <param name="contentType">Request content type: String, Json or any other object</param>
         /// <returns>HttpWebRequest</returns>
-        public Request AddRequestContent(string method, object content, string contentType)
+        public Request AddRequestContent(Methods method, object content, string contentType)
         {
             Method = method;
             byte[] byteArray;
@@ -346,7 +369,15 @@ namespace WebaApiTest
             {
                 _request.CookieContainer.Add((Cookie)cookie);
             }
-                
+        }
+        
+        /// <summary>
+        /// Sets coookie
+        /// </summary>
+        public Request SetCookie(Cookie cookie)
+        {
+            Cookies.Add(cookie);
+            return this;
         }
 
         /// <summary>
